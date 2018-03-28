@@ -16,7 +16,7 @@ struct Mixer_impl;
 struct Mixer {
 	AifcPlayer *_aifc;
 	SfxPlayer *_sfx;
-	Mixer_impl *_impl;
+	Mixer_impl *_impl = NULL;
 
 	Mixer(SfxPlayer *sfx);
 	void init();

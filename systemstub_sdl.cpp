@@ -60,15 +60,26 @@ void SystemStub_SDL::init(const char *title, const DisplayMode *dm) {
 		windowW = dm->width;
 		windowH = dm->height;
 	} else {
+#ifdef __SWITCH__
+		flags |= 0;
+        windowW = dm->width;
+        windowH = dm->height;
+#else
 		flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+#endif
 	}
 	_window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowW, windowH, flags);
 	SDL_GetWindowSize(_window, &_w, &_h);
+    printf("window: %p (%i x %i)\n", _window, _w, _h);
 
 	if (dm->opengl) {
 		_glcontext = SDL_GL_CreateContext(_window);
 	} else {
+#ifdef __SWITCH__
+		_renderer = SDL_CreateRenderer(_window, -1, SDL_RENDERER_SOFTWARE);
+#else
 		_renderer = SDL_CreateRenderer(_window, -1, SDL_RENDERER_ACCELERATED);
+#endif
 		SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
 		SDL_RenderClear(_renderer);
 	}
@@ -110,7 +121,10 @@ void SystemStub_SDL::fini() {
 		SDL_DestroyRenderer(_renderer);
 		_renderer = 0;
 	}
-	SDL_GL_DeleteContext(_glcontext);
+    if (_glcontext) {
+        SDL_GL_DeleteContext(_glcontext);
+        _glcontext = 0;
+    }
 	SDL_DestroyWindow(_window);
 	SDL_Quit();
 }
@@ -125,15 +139,19 @@ void SystemStub_SDL::prepareScreen(int &w, int &h, float ar[4]) {
 }
 
 void SystemStub_SDL::updateScreen() {
-	if (_renderer) {
+    if (_renderer) {
+        //printf("SDL_RenderPresent\n");
 		SDL_RenderPresent(_renderer);
+        //printf("\n--------------\nSDL_RenderPresent\n---------------\n");
 	} else {
-		SDL_GL_SwapWindow(_window);
+		//SDL_GL_SwapWindow(_window);
+        //printf("\n--------------\nSDL_GL_SwapWindow\n--------------\n");
 	}
 }
 
 void SystemStub_SDL::setScreenPixels565(const uint16_t *data, int w, int h) {
 	if (_renderer) {
+        //printf("\n--------------\nsetScreenPixels565\n---------------\n");
 		if (_texW != w || _texH != h) {
 			if (_texture) {
 				SDL_DestroyTexture(_texture);
@@ -142,6 +160,7 @@ void SystemStub_SDL::setScreenPixels565(const uint16_t *data, int w, int h) {
 		}
 		if (!_texture) {
 			_texture = SDL_CreateTexture(_renderer, SDL_PIXELFORMAT_RGB565, SDL_TEXTUREACCESS_STREAMING, w, h);
+            //printf("SDL_CreateTexture: %p (%i x %i)\n", _texture, w, h);
 			if (!_texture) {
 				return;
 			}

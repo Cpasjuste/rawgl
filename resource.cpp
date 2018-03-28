@@ -256,6 +256,7 @@ void Resource::load() {
 			warning("Resource::load() ec=0x%X (me->bankNum == 0)", 0xF00);
 			me->status = STATUS_NULL;
 		} else {
+#error TODO: crash on device
 			debug(DBG_BANK, "Resource::load() bufPos=0x%X size=%d type=%d pos=0x%X bankNum=%d", memPtr - _memPtrStart, me->packedSize, me->type, me->bankPos, me->bankNum);
 			if (readBank(me, memPtr)) {
 				if (me->type == 2) {

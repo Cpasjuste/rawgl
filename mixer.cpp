@@ -43,7 +43,11 @@ static uint8_t *convertMono8ToWav(const uint8_t *data, int freq, int size, const
 
 struct Mixer_impl {
 
-	static const int kMixFreq = 44100;
+#ifdef __SWITCH__
+	static const int kMixFreq = 48000;
+#else
+    static const int kMixFreq = 44100;
+#endif
 	static const int kMixBufSize = 4096;
 	static const int kMixChannels = 4;
 
@@ -54,7 +58,11 @@ struct Mixer_impl {
 		memset(_sounds, 0, sizeof(_sounds));
 		_music = 0;
 
+#ifdef __SWITCH__
+        Mix_Init(MIX_INIT_OGG);
+#else
 		Mix_Init(MIX_INIT_OGG | MIX_INIT_FLUIDSYNTH);
+#endif
 		if (Mix_OpenAudio(kMixFreq, AUDIO_S16SYS, 2, kMixBufSize) < 0) {
 			warning("Mix_OpenAudio failed: %s", Mix_GetError());
 		}
@@ -200,8 +208,9 @@ Mixer::Mixer(SfxPlayer *sfx)
 }
 
 void Mixer::init() {
-	_impl = new Mixer_impl();
-	_impl->init();
+    // TODO: audio freeze on switch
+	//_impl = new Mixer_impl();
+	//_impl->init();
 }
 
 void Mixer::quit() {
