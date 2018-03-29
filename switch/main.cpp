@@ -88,9 +88,9 @@ static const int DEFAULT_WINDOW_H = 400;
 //#undef main
 int main(int argc, char *argv[]) {
 
-    //nxlink_print_init();
-    consoleDebugInit(debugDevice_SVC);
-    stdout = stderr;
+    nxlink_print_init();
+    //consoleDebugInit(debugDevice_SVC);
+    //stdout = stderr;
 
     const char *dataPath = "./data";
 	int part = 16001;

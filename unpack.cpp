@@ -78,6 +78,9 @@ bool delphine_unpack(uint8_t *dst, const uint8_t *src, int len) {
 			if (!nextBit(&uc)) {
 				unpackHelper1(&uc, 3, 0);
 			} else {
+#ifdef __SWITCH__
+#error TODO: unpackHelper2 crash on real hw :/
+#endif
 				unpackHelper2(&uc, 8);
 			}
 		} else {

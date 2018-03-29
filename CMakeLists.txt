@@ -12,6 +12,13 @@ option(BUILD_GL "Build with GL support" OFF)
 # setup toolchain
 include(Toolchain.cmake)
 
+if (NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Release)
+endif ()
+
+#set(CMAKE_CXX_FLAGS_DEBUG "-g")
+#set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+
 project(rawgl)
 
 ##############
